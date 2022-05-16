@@ -128,7 +128,7 @@ class HBNBCommand(cmd.Cmd):
         while i < len(args):
             param = args[i].split("=")
             if "\"" in param[1]:
-                setattr(new_instance, param[0], param[1].strip('\"'))
+                setattr(new_instance, param[0], (param[1].strip('\"')).replace("_", " "))
             elif "." in param[1]:
                 setattr(new_instance, param[0], float(param[1]))
             else:
