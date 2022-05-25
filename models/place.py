@@ -2,6 +2,8 @@
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, Float, ForeignKey
+import os
+from sqlalchemy.orm import relationship
 
 
 class Place(BaseModel, Base):
