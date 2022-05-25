@@ -18,3 +18,18 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     amenity_ids = []
+
+    if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+        reviews = relationship('Review', backref='place')
+    else:
+        @property
+        def reviews(self):
+            """Getter attribute for reviews where returns depdending on id"""
+            from models import storage
+            from models.city import Review
+            list = []
+            r = storage.all(Review)
+            for value in r.values():
+                if value.place_id == self.id:
+                    list.append(value)
+            return list
