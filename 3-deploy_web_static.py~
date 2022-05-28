@@ -1,5 +1,7 @@
- #!/usr/bin/python3
-"""Fabric script that generates a .tgz archive from the contents of the web_static folder"""
+#!/usr/bin/python3
+"""
+Fabric script that generates a .tgz archive from the contents of the web_static
+folder"""
 
 from fabric.api import local, run, put, env
 from datetime import datetime
@@ -18,15 +20,16 @@ def do_pack():
     except:
         return None
 
+
 def do_deploy(archive_path):
     """Deploys webserver content"""
     if not exists(archive_path):
         return False
 
     put(archive_path, '/tmp/')
-    file_name = archive_path.split('.')[0].split('/')[1]
-    d_folder = "/data/web_static/releases/{}".format(file_name)
-    run('sudo mkdir -p {}'.format(d_folder))
+    file_name = archive_path.split('/')[-1].split('.')[0]
+    d_folder = "/data/web_static/releases/{}/".format(file_name)
+    run('mkdir -p {}'.format(d_folder))
     run('tar -xzf /tmp/{}.tgz -C {}'.format(file_name, d_folder))
     run('rm /tmp/{}.tgz'.format(file_name))
     run('mv {}/web_static/* {}/'.format(d_folder, d_folder))
@@ -34,3 +37,11 @@ def do_deploy(archive_path):
     run('rm -rf /data/web_static/current')
     run('ln -s {} /data/web_static/current'.format(d_folder))
     return True
+
+
+def deploy():
+    """creates and distributes an archive to the web servers"""
+    archive_path = do_pack()
+    if archive_path is None:
+        return False
+    return do_deploy(archive_path)
